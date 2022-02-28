@@ -1,29 +1,173 @@
+#include <limits.h>
 #include <stdio.h>
-#include <math.h>
+#include <stdbool.h>
 #include <string.h>
-#include "dijkstra.h"
+#include <stdlib.h>
+
+#define V 9
+#define INFINITY 9999
+
+int getInicio(int no_argumentos, char **entrada) {
+
+    int verticeInicial;
+    
+    for(int i=0; i<no_argumentos; i++)
+        if(strstr(entrada[i], "-i") != NULL) 
+            verticeInicial = atoi(entrada[i+1]);
+    
+    return verticeInicial;
+}
+
+int getFinal(int no_argumentos, char **entrada) {
+
+    int verticeFinal = -1;
+    
+    for(int i=0; i<no_argumentos; i++){
+        if(strstr(entrada[i], "-l") != NULL) 
+            verticeFinal = atoi(entrada[i+1]);
+    }
+    return verticeFinal;
+}
+
+char getTipoDeSaida(int no_argumentos, char **entrada){
+    
+    for(int i=0; i<no_argumentos; i++)
+        if(strstr(entrada[i], "-s") != NULL) 
+            return 's';
+        else if(strstr(entrada[i], "-o") != NULL)
+            return 'o';
+    
+    return 'x';
+}
+
+FILE *getArquivoSaida(int no_argumentos, char **entrada) {
+    
+    char nomeArquivo[20];
+    FILE *arqSaida;
+    
+    for(int i=0; i<no_argumentos; i++){
+        if(strstr(entrada[i], "-o") != NULL) 
+            strcpy(nomeArquivo, entrada[i+1]);
+    }
+
+    arqSaida = fopen(nomeArquivo, "wb");
+    return arqSaida;
+}
+
+FILE *getArquivo(int no_argumentos, char **entrada) {
+    
+    char nomeArquivo[20];
+    FILE *pont_arq;
+    
+    for(int i=0; i<no_argumentos; i++){
+        if(strstr(entrada[i], "-f") != NULL) 
+            strcpy(nomeArquivo, entrada[i+1]);
+    }
+
+    pont_arq = fopen(nomeArquivo, "r");
+    return pont_arq;
+}
 
 
-void ler_arquivo(FILE *arquivo){
 
-	if (arquivo == NULL){
-		printf("Problemas na abertura do arquivo\n");
-		return;
-	}
+void dijkstra(int Graph[V][V], int n, int start, int verticeFinal, int no_argumentos, char **entrada) {
+  int cost[V][V], pred[V], distance[V];
+//   int * distance = (int *) calloc (V, sizeof (int));
+  int visited[V], count, mindistance, nextnode, i, j;
 
-	char linha[50], *entrada_arq;
+  // Creating cost matrix
+  for (i = 0; i <= n; i++)
+    for (j = 0; j <= n; j++)
+      if (Graph[i][j] == 0)
+        cost[i][j] = INFINITY;
+      else
+        cost[i][j] = Graph[i][j];
 
-	int v1[100], v2[100], w[100];
+  for (i = 0; i <= n; i++) {
+    distance[i] = cost[start][i];
+    pred[i] = start;
+    visited[i] = 0;
+  }
+
+  distance[start] = 0;
+  visited[start] = 1;
+  count = 1;
+
+  while (count <= n) {
+    mindistance = INFINITY;
+
+    for (i = 0; i <= n; i++)
+      if (distance[i] < mindistance && !visited[i]) {
+        mindistance = distance[i];
+        nextnode = i;
+      }
+
+    visited[nextnode] = 1;
+    for (i = 0; i <= n; i++)
+      if (!visited[i])
+        if (mindistance + cost[nextnode][i] < distance[i]) {
+          distance[i] = mindistance + cost[nextnode][i];
+          pred[i] = nextnode;
+        }
+    count++;
+  }
+
+
+    FILE *arquivoO = getArquivoSaida(no_argumentos, entrada);
+    char saida = getTipoDeSaida(no_argumentos, entrada);
+
+    // Printing the distance
+    int verticeAux;
+    if(verticeFinal != -1)
+        verticeAux = distance[verticeFinal];
+
+    // distance = {INFINITY};
+
+    switch (saida)
+    {    
+    case 'o':
+        if(verticeFinal != -1){
+            fprintf(arquivoO, "%d", distance[verticeFinal]);
+            break;
+        }
+        for (i = 0; i <= n; i++)
+            if (distance[i] != INFINITY)
+                fprintf(arquivoO, "%d:%d ", i, distance[i]);
+        
+        break;
+    
+    default:
+        if(verticeFinal != -1){
+            printf("%d\n", distance[verticeFinal]);
+            break;
+        }
+        for (i = 0; i <= n; i++)
+            if (distance[i] != INFINITY)
+                printf("%d:%d ", i, distance[i]);
+        break;
+    }
+}
+
+
+int main( int argc, char *argv[ ] )
+{
+    int grafo[V][V] = {0};
+
+    // Leitura de arquivo
+    FILE *arquivoF = getArquivo(argc, argv);
+    // FILE *arquivoO = getArquivoSaida(argc, argv);
+    
+    char linha[50], *entrada_arq;
+
+	int v1, v2, w;
 	int no_vertices, no_arestas;
 
-	int id_vertice = 0, i = 0, grau_maximo = 0;
+	int i = 0, j=0;
 
-	// Leitura por linhas
-	while (!feof(arquivo))	{
+    // Lendo arquivo
+    while (!feof(arquivoF))	{
 	
-		entrada_arq = fgets(linha, 100, arquivo);  // o 'fgets' lê até 99 caracteres ou até o '\n'
-		if (entrada_arq)
-			printf("Linha %d : %s",i,linha);
+		entrada_arq = fgets(linha, 100, arquivoF);  // o 'fgets' lê até 99 caracteres ou até o '\n'
 
 		if (i == 0){ // VERTICES E ARESTAS
 			no_vertices = linha[0]-'0';
@@ -31,103 +175,26 @@ void ler_arquivo(FILE *arquivo){
 
 		} else { // VERTICE1, VERTICE2 E PESO
 
-			v1[id_vertice] = linha[0]-'0';
-			v2[id_vertice] = linha[2]-'0';
+			v1 = linha[0]-'0';
+			v2 = linha[2]-'0';
 
 			if (linha[4]){
-				w[id_vertice] = linha[4]-'0';
+				w = linha[4]-'0';
 			} else {
-				w[id_vertice] = 1;
+				w = 1;
 			}
-
-			if (w[id_vertice] > grau_maximo){
-				grau_maximo = w[id_vertice];
-			}
-
-			id_vertice++;
-
+            grafo[v1][v2] = w;
+            grafo[v2][v1] = w;
 		}
 		i++;
 	}
 
-	// Começa a aplicação do algoritmo
-	Grafo *gr = cria_grafo(no_vertices, grau_maximo);
-	printa_grafo(gr, no_vertices);
-	
-	// return gr;
-}
+    int verticeInicial, verticeFinal;
 
-void selecionar_parametro(int no_argumentos, char **entrada){
+    verticeInicial = getInicio(argc, argv);
+    verticeFinal = getFinal(argc, argv);
 
-	char opt = entrada[1][1];
-	char nome_arquivo[15];
-	int verticeInicial, verticeFinal;
-	FILE *pont_arq;
-	Grafo *gr;
-
-	switch (opt)
-	{
-		case 'h':
-			printf("HELP!\n");
-			break;
-			
-		case 'o':
-
-			strcpy(nome_arquivo, entrada[2]);
-
-			printf("Arquivo: %s\n", nome_arquivo);
-			printf("Saida no arquivo!\n");
-
-			pont_arq = fopen(nome_arquivo,"w");
-			fclose(pont_arq);
-
-			break;
-			
-		case 'f':
-			strcpy(nome_arquivo, entrada[2]);
-
-			pont_arq = fopen(nome_arquivo,"r");
-
-			// gr = ler_arquivo(pont_arq);
-
-			if (entrada[3][1]=='i'){
-				verticeInicial = entrada[4][0] - '0';
-			}
-			else if (entrada[3][1]=='l'){
-				verticeFinal = entrada[4][0] - '0';
-			}
-
-			if (entrada[5][1]=='i'){
-				verticeInicial = entrada[6][0] - '0';
-			}
-			else if (entrada[5][1]=='l'){
-				verticeFinal = entrada[6][0] - '0';
-			}
-			
-			fclose(pont_arq);
-
-			break;
-			
-		case 's':
-			printf("Ordem crescente!\n");
-			break;
-			
-		case 'i':
-			printf("Vertice inicial!\n");
-			break;
-			
-		case 'l':
-			printf("Vertice final!\n");
-			break;
-		
-		default:
-			break;
-	}
-}
-
-
-void main( int argc, char *argv[ ] )
-{
-	selecionar_parametro(argc, argv);
+    dijkstra(grafo, no_vertices, verticeInicial, verticeFinal, argc, argv);
     
+	return 0;
 }

@@ -1,5 +1,5 @@
-dijkstra: dijkstra.c grafo.c main.c
-	@gcc dijkstra.c grafo.c main.c -o dijkstra
+dijkstra: main.c
+	@gcc main.c -o dijkstra
 
 clean:
 	rm auxiliar
