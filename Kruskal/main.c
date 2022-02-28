@@ -1,5 +1,4 @@
-#include "ford_fulkerson.h"
-
+#include "kruskal.h"
 
 void ler_arquivo(FILE *arquivo){
 
@@ -56,7 +55,7 @@ void ler_arquivo(FILE *arquivo){
 	// return gr;
 }
 
-void selecionar_parametro(int no_argumentos, char **entrada, int *verticeInicial, int *verticeFinal){
+void selecionar_parametro(int no_argumentos, char **entrada){
 	char opt = entrada[1][1];
 	char nome_arquivo[15];
 	FILE *pont_arq;
@@ -69,7 +68,6 @@ void selecionar_parametro(int no_argumentos, char **entrada, int *verticeInicial
 			break;
 			
 		case 'o':
-
 			strcpy(nome_arquivo, entrada[2]);
 
 			printf("Arquivo: %s\n", nome_arquivo);
@@ -86,20 +84,6 @@ void selecionar_parametro(int no_argumentos, char **entrada, int *verticeInicial
 			pont_arq = fopen(nome_arquivo,"r");
 
 			// gr = ler_arquivo(pont_arq);
-
-			if (entrada[3][1]=='i'){
-				*verticeInicial = atoi(entrada[4]);
-			}
-			else if (entrada[3][1]=='l'){
-				*verticeFinal = atoi(entrada[4]);
-			}
-
-			if (entrada[5][1]=='i'){
-				*verticeInicial = atoi(entrada[6]);
-			}
-			else if (entrada[5][1]=='l'){
-				*verticeFinal = atoi(entrada[6]);
-			}
 			
 			fclose(pont_arq);
 
@@ -122,10 +106,22 @@ void selecionar_parametro(int no_argumentos, char **entrada, int *verticeInicial
 	}
 }
 
+void main( int argc, char *argv[ ] ){
+	graph* g = (graph*)(malloc(sizeof(graph)));
+	int V, E, v1, v2, w;
+	scanf("%d%d", &V, &E);
+	g->V = V;
+	g->E = E;
 
-void main( int argc, char *argv[ ] )
-{
-	int verticeInicial, verticeFinal;
-	selecionar_parametro(argc, argv, &verticeInicial, &verticeFinal);
-	printf("inicio %d final %d", verticeInicial, verticeFinal);
+	for(int i = 0 ; i < E ; i++) {
+		scanf("%d%d%d", &v1, &v2, &w);
+		
+		g->edge[i][0] = v1;
+		g->edge[i][1] = v2;
+		g->edge[i][2] = w;
+	}
+	
+	kruskal(g);
+
+	//selecionar_parametro(argc, argv);
 }

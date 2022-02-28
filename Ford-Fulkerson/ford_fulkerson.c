@@ -1,28 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-#include <limits.h>
-#include <math.h>
-#include <stdlib.h>
-
-// struct AdjListNode {
-//     int vertex;
-//     struct AdjListNode* next;
-// };
-
-// typedef struct {
-//     struct AdjListNode* head;
-// } AdjList;
-
-#define MAX_NODES 10
-
-typedef struct {
-    int V;
-    int E;
-    int adj_list[MAX_NODES][MAX_NODES];
-} graph;
-
-int head, tail;
-int q[MAX_NODES + 2];
+#include "ford_fulkerson.h"
 
 void enqueue(int x) {
     q[tail] = x;
@@ -89,67 +65,4 @@ int ford_fulkerson(graph g, int start, int end) {
     }
 
     return max_flow;
-}
-
-void selecionar_parametro(int no_argumentos, char **entrada, int *start, int *end){
-    int i = 1;
-	char opt = entrada[i][1];
-	char nome_arquivo[15];
-	FILE *pont_arq;
-
-	switch (opt) {
-		case 'h':
-			printf("HELP!\n");
-            break;
-			
-		case 'o':
-			strcpy(nome_arquivo, entrada[2]);
-
-			printf("Arquivo: %s\n", nome_arquivo);
-			printf("Saida no arquivo!\n");
-
-			pont_arq = fopen(nome_arquivo,"w");
-			fclose(pont_arq);
-            i++;
-			
-		case 'f':
-			strcpy(nome_arquivo, entrada[i++]);
-
-			printf("Arquivo: %s\n", nome_arquivo);
-			printf("Entrada em arquivo!\n");
-
-			pont_arq = fopen(nome_arquivo,"r");
-			fclose(pont_arq);
-			
-		case 's':
-			printf("Ordem crescente!\n");
-            i++;
-			
-		case 'i':
-            *start = atoi(entrada[i]);
-			printf("Vertice inicial!\n");
-			
-		case 'l':
-            *end = atoi(entrada[i]);
-			printf("Vertice final!\n");
-		
-		default:
-			break;
-	}
-}
-
-
-int main( int argc, char *argv[ ] )
-{
-    graph g;
-	int v1, v2, weight, start = -1, end = -1, cont;
-  
-	for(cont = 0 ; cont < argc ; cont++)
-		printf("%d Parametro: %s\n", cont, argv[cont]);
-
-    selecionar_parametro(argc, argv, &start, &end);
-
-    printf("start %d end %d", start, end);
-  
-  return 0;
 }
