@@ -14,13 +14,6 @@ typedef struct {
     int adj_list[MAX_NODES][MAX_NODES];
 } graph;
 
-int head, tail;
-int q[MAX_NODES + 2];
-
-void enqueue(int x);
-
-int dequeue();
-
-int dfs(int residual[MAX_NODES][MAX_NODES], int start, int end, int visited[], int path[], int v);
+int dfs(int v, int residual[][v], int start, int end, int visited[], int path[]);
 
 int ford_fulkerson(graph g, int start, int end);
