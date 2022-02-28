@@ -6,6 +6,8 @@
 
 #define MAX_NODES 100
 
+#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+
 typedef struct {
     int V;
     int E;
@@ -19,6 +21,6 @@ void enqueue(int x);
 
 int dequeue();
 
-int bfs(graph g, int residual[MAX_NODES][MAX_NODES], int start, int end, int parent[]);
+int dfs(int residual[MAX_NODES][MAX_NODES], int start, int end, int visited[], int path[], int v);
 
 int ford_fulkerson(graph g, int start, int end);

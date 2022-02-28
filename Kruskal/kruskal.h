@@ -7,12 +7,12 @@
 #include <math.h>
 
 
-#define MAX 30
+#define MAX_NODES 30
 
 
 typedef struct {
     int V, E;
-    int edge[MAX][3];
+    int edge[MAX_NODES][3];
 } graph;
 
 
@@ -52,7 +52,7 @@ int find(subset subsets[], int i);
 void do_union(subset subsets[], int v1, int v2);
 
 
-void kruskal(graph* g);
+int kruskal(graph* g);
 
 
 #endif

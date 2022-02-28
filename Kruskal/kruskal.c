@@ -24,7 +24,7 @@ void do_union(subset subsets[], int v1, int v2) {
     }
 }
 
-void kruskal(graph* g) {
+int kruskal(graph* g) {
     int V = g->V, j = 0, i = 0, x, y, cost;
     float mst[V - 1][3];
 
@@ -56,5 +56,5 @@ void kruskal(graph* g) {
 
     //printf("Cost: %d", cost);
 
-    return;
+    return cost;
 }
