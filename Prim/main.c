@@ -17,7 +17,9 @@ int main(int argc, char **argv) {
 	calcular_custo_minimo(&prim1);
 
 	// salva informacoes no arquivo "saida.txt"
-	gerar_saida(&prim1, argc, argv);    
+	gerar_saida(&prim1, argc, argv); 
+
+	liberar_grafo(&prim1);   
 
 	return 0;
 }

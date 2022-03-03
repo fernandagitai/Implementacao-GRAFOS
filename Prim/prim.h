@@ -36,5 +36,6 @@ FILE *getArquivoSaida(int no_argumentos, char **entrada);
 
 FILE *getArquivo(int no_argumentos, char **entrada);
 
+void liberar_grafo(Prim *prim);
 
 #endif 

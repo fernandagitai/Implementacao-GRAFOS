@@ -200,7 +200,21 @@ void gerar_saida(Prim *prim, int no_argumentos, char **entrada) {
 	
 	FILE *arquivoSaida = getArquivoSaida(no_argumentos, entrada);
 
-	fprintf(arquivoSaida, "%s: %d\n", prim->arquivo_saida, prim->custo_minimo); // salva informacoes no arquivo prim->arquivo_saida
-	printf("%s: %d\n", prim->arquivo_saida, prim->custo_minimo); // salva informacoes no arquivo prim->arquivo_saida
+	if(arquivoSaida){
+		fprintf(arquivoSaida, "%s: %d\n", prim->arquivo_saida, prim->custo_minimo); 
+
+	} else {
+		printf("%s: %d\n", prim->arquivo_saida, prim->custo_minimo); 
+	}
+	
 	fclose(arquivoSaida);
+}
+
+void liberar_grafo(Prim *prim) {
+	int i;
+
+	for(i = 0; i < prim->vertices; i++) {
+		free(prim->grafo[i]);
+	}
+	free(prim->grafo);
 }
