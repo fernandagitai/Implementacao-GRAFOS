@@ -72,10 +72,9 @@ FILE *getArquivo(int no_argumentos, char **entrada) {
 
 void dijkstra(int Graph[V][V], int n, int start, int verticeFinal, int no_argumentos, char **entrada) {
   int cost[V][V], pred[V], distance[V];
-//   int * distance = (int *) calloc (V, sizeof (int));
+
   int visited[V], count, mindistance, nextnode, i, j;
 
-  // Creating cost matrix
   for (i = 0; i <= n; i++)
     for (j = 0; j <= n; j++)
       if (Graph[i][j] == 0)
@@ -116,7 +115,6 @@ void dijkstra(int Graph[V][V], int n, int start, int verticeFinal, int no_argume
     FILE *arquivoO = getArquivoSaida(no_argumentos, entrada);
     char saida = getTipoDeSaida(no_argumentos, entrada);
 
-    // Printing the distance
     int verticeAux;
     if(verticeFinal != -1)
         verticeAux = distance[verticeFinal];
@@ -151,13 +149,13 @@ void dijkstra(int Graph[V][V], int n, int start, int verticeFinal, int no_argume
 
 int main( int argc, char *argv[ ] )
 {
-    int grafo[V][V] = {0};
+  int grafo[V][V] = {0};
 
-    // Leitura de arquivo
-    FILE *arquivoF = getArquivo(argc, argv);
-    // FILE *arquivoO = getArquivoSaida(argc, argv);
-    
-    char linha[50], *entrada_arq;
+  // Leitura de arquivo
+  FILE *arquivoF = getArquivo(argc, argv);
+  FILE *arquivoO = getArquivoSaida(argc, argv);
+   
+  char linha[50], *entrada_arq;
 
 	int v1, v2, w;
 	int no_vertices, no_arestas;
@@ -165,7 +163,7 @@ int main( int argc, char *argv[ ] )
 	int i = 0, j=0;
 
     // Lendo arquivo
-    while (!feof(arquivoF))	{
+  while (!feof(arquivoF))	{
 	
 		entrada_arq = fgets(linha, 100, arquivoF);  // o 'fgets' lê até 99 caracteres ou até o '\n'
 
@@ -189,12 +187,15 @@ int main( int argc, char *argv[ ] )
 		i++;
 	}
 
-    int verticeInicial, verticeFinal;
+  int verticeInicial, verticeFinal;
 
-    verticeInicial = getInicio(argc, argv);
-    verticeFinal = getFinal(argc, argv);
+  verticeInicial = getInicio(argc, argv);
+  verticeFinal = getFinal(argc, argv);
 
-    dijkstra(grafo, no_vertices, verticeInicial, verticeFinal, argc, argv);
+  dijkstra(grafo, no_vertices, verticeInicial, verticeFinal, argc, argv);
+
+  fclose(arquivoF);
+  fclose(arquivoO);
     
 	return 0;
 }
