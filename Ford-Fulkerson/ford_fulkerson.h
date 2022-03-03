@@ -9,11 +9,10 @@
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 
 typedef struct {
-    int V;
-    int E;
+    int V, E;
     int adj_list[MAX_NODES][MAX_NODES];
 } graph;
 
 int dfs(int v, int residual[][v], int start, int end, int visited[], int path[]);
 
-int ford_fulkerson(graph g, int start, int end);
+int ford_fulkerson(graph g, int start, int end, int residual[][g.V]);

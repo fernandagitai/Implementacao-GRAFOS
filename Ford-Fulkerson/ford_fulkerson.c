@@ -9,14 +9,16 @@ int dfs(int v, int residual[][v], int start, int end, int visited[v], int path[v
 
     for(i = 1 ; i <= v ; i++) {
         current = residual[start][i];
-        if(visited[i] == 0 && (current > 0 && current < INT_MAX)) {
+        if(visited[i] == 0 && current > 0) {
             path[start] = i;
             visited[i] = 1;
 
             if(dfs(v, residual, i, end, visited, path) != 0) {
                 visited[i] = 0;
+
                 return 1;
-            } else {
+            } 
+            else {
                 visited[i] = 0;
                 path[start] = -1;
             }
@@ -26,23 +28,19 @@ int dfs(int v, int residual[][v], int start, int end, int visited[v], int path[v
     return 0;
 }
 
-int ford_fulkerson(graph g, int start, int end) {
+int ford_fulkerson(graph g, int start, int end, int residual[g.V][g.V]) {
     int u, v, max_flow = 0, i, j, path[g.V], visited[g.V];
 
     for(i = 1 ; i <= g.V ; i++) {
         path[i] = 0;
         visited[i] = 0;
-    }
 
-    visited[start] = 1;
-
-    int residual[g.V][g.V];
-
-    for(i = 1 ; i <= g.V ; i++) {
         for(j = 1 ; j <= g.V ; j++){
             residual[i][j] = g.adj_list[i][j];
         }
     }
+
+    visited[start] = 1;
 
     while(dfs(g.V, residual, start, end, visited, path) == 1) {
         int path_f = INT_MAX;

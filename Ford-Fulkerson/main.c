@@ -1,14 +1,23 @@
 #include "ford_fulkerson.h"
 
 void main(int argc, char *argv[ ]) {
-	int start = 0, end = 0, in = 0, out = 0, solution = 0, i, j, V, E, v1, v2, w, max_flow;
-	int residual[MAX_NODES][MAX_NODES];
-	char file_in_name[15], *line, line_in[100], file_out_name[15] = "", check;
+	int start = -1, end = -1, solution = 0, i, j, V, E, v1, v2, w, max_flow;
+	char file_in_name[15], file_out_name[15] = "", check;
 	graph g;
 
 	for(i = 0 ; i < argc ; i++){
 		if(!strcmp(argv[i], "-h")) {
-			//show help
+			printf("\n\n---------Ford-Fulkerson Algorithm---------\n\n\n");
+			printf("The inputs needed to run the algorithm are:\n\n");
+			printf(" -f <input_file_name>\n");
+			printf(" -i <initial_vertex>\n");
+			printf(" -l <end_vertex>\n\n\n");
+			printf("Others possible arguments are:\n\n");
+			printf(" -o <output_file_name>\n");
+			printf(" -s (solution in ascending order)");
+			printf("\n\n------------------------------------------\n\n");
+
+			return;
 		}
 
 		else if(!strcmp(argv[i], "-o")) {
@@ -36,11 +45,10 @@ void main(int argc, char *argv[ ]) {
 		}		
 	}
 
-	//printf("i -> %d l -> %d s -> %d txt -> %s", start, end, solution, file_in_name);
-
 	FILE *file_in = fopen(file_in_name, "r");
 	
-	if(file_in == NULL){
+	if(file_in == NULL || start == -1 || end == -1) {
+		printf("Invalid input.\n");
 		return;
 	}
 
@@ -48,9 +56,8 @@ void main(int argc, char *argv[ ]) {
 
 	g.V = V;
 	g.E = E;
-	//memset(g.adj_list, 0, sizeof(g.adj_list));
 
-	//printf("\nV -> %d E -> %d\n", g.V, g.E);
+	int residual[g.V][g.V];
 
 	for(i = 0 ; i < E ; i++) {
 		fscanf(file_in, "%d%d%c", &v1, &v2, &check);
@@ -59,21 +66,11 @@ void main(int argc, char *argv[ ]) {
 		} else {
 			w = 1;
 		}
-		//printf(" v1 -> %d v2 -> %d w -> %d\n", v1, v2, w);
 
 		g.adj_list[v1][v2] = w;
 	}
 
-	// for(i = 1 ; i <= g.V ; i++) {
-	// 	for(j = 1 ; j <= g.V ; j++) {
-	// 		//if(g.adj_list[i][j] != 0)
-	// 			printf("v1 -> %d v2 -> %d w -> %d\n", i, j, g.adj_list[i][j]);
-	// 	}
-	// }
-
-	max_flow = ford_fulkerson(g, start, end);
-
-	printf("%d", max_flow);
+	max_flow = ford_fulkerson(g, start, end, residual);
 
 	if(strcmp(file_out_name, "")) {
 		FILE *file_out = fopen(file_out_name, "w");
@@ -81,7 +78,7 @@ void main(int argc, char *argv[ ]) {
 		if(solution) {
 			for(i = 1 ; i <= g.V ; i++) {
 				for(j = 1 ; j <= g.V ; j++){
-					if(residual[i][j] != INT_MAX) {
+					if(residual[i][j] != 0) {
 						fprintf(file_out, "(%d,%d) %d\n", i, j, residual[i][j]);
 					}
 				}
@@ -95,7 +92,7 @@ void main(int argc, char *argv[ ]) {
 		if(solution) {
 			for(i = 1 ; i <= g.V ; i++) {
 				for(j = 1 ; j <= g.V ; j++){
-					if(residual[i][j] != INT_MAX) {
+					if(residual[i][j] != 0) {
 						printf("(%d,%d) %d\n", i, j, residual[i][j]);
 					}
 				}
@@ -105,8 +102,4 @@ void main(int argc, char *argv[ ]) {
 			printf("%d", max_flow);
 		}
 	}
-
-
-	//selecionar_parametro(argc, argv, &verticeInicial, &verticeFinal);
-	//printf("inicio %d final %d", verticeInicial, verticeFinal);
 }
