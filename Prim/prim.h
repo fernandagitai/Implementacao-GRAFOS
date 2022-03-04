@@ -6,6 +6,7 @@
 
 struct prim {
 	int vertices;
+	int verticeInicial;
 	int arestas;
 	int **grafo; 
 	int max_vertices;

@@ -8,7 +8,7 @@
 
 int getInicio(int no_argumentos, char **entrada) {
 
-    int verticeInicial;
+    int verticeInicial = 1;
     
     for(int i=0; i<no_argumentos; i++)
         if(strstr(entrada[i], "-i") != NULL) 
@@ -31,11 +31,13 @@ char getTipoDeSaida(int no_argumentos, char **entrada){
 FILE *getArquivoSaida(int no_argumentos, char **entrada) {
     
     char nomeArquivo[20];
-    FILE *arqSaida;
+    FILE *arqSaida = NULL;
     
     for(int i=0; i<no_argumentos; i++){
         if(strstr(entrada[i], "-o") != NULL) 
             strcpy(nomeArquivo, entrada[i+1]);
+		else
+			return NULL;
     }
 
     arqSaida = fopen(nomeArquivo, "wb");
@@ -62,7 +64,7 @@ void inicializar_prim(Prim *prim, int no_argumentos, char **entrada) {
 
 	prim->max_vertices = V;
 	prim->infinito = INFINITY; 
-	alocar_grafo(prim);
+	prim->verticeInicial = getInicio(no_argumentos, entrada);
 	
 
     // Leitura de arquivo
@@ -76,32 +78,33 @@ void inicializar_prim(Prim *prim, int no_argumentos, char **entrada) {
 	int i = 0;
 
     // Lendo arquivo
-    while (!feof(arquivo))	{
 	
-		entrada_arq = fgets(linha, 100, arquivo);  // o 'fgets' lê até 99 caracteres ou até o '\n'
+	fscanf(arquivo, "%d %d\n", &(prim->vertices), &(prim->arestas));
+	prim->vertices++;
 
-		if (i == 0){ // VERTICES E ARESTAS
-			prim->vertices = linha[0]-'0';
-			prim->arestas = linha[2]-'0';
+	alocar_grafo(prim);
 
-		} else { // VERTICE1, VERTICE2 E PESO
+	for(int k=0; k<prim->arestas; k++){
+		// printf("k: %d\n", k);
+		entrada_arq = fgets(linha, 100, arquivo);
+		v1 = linha[0]-'0';
+		v2 = linha[2]-'0';
 
-			v1 = linha[0]-'0';
-			v2 = linha[2]-'0';
-
-			if (linha[4]){
-				w = linha[4]-'0';
-			} else {
-				w = 1;
-			}
-			prim->grafo[v1][v2] = w;
-			prim->grafo[v2][v1] = w;
+		if (linha[4]){
+			w = linha[4]-'0';
+		} else {
+			w = 1;
 		}
-		i++;
+		// printf("v1: %d, v2: %d\n", v1, v2);
+
+		prim->grafo[v1][v2] = w;
+		prim->grafo[v2][v1] = w;
+
+		// printf("fim de k: %d\n", k);
+
 	}
 
-    int verticeInicial = getInicio(no_argumentos, entrada);
-
+    // int verticeInicial = getInicio(no_argumentos, entrada);
 	fclose(arquivo);
 }
 
@@ -109,11 +112,11 @@ void alocar_grafo(Prim *prim) {
 	int i, j;
 
 	// alocar linhas
-	prim->grafo = (int**)malloc(sizeof(int*) * prim->vertices);
+	prim->grafo = malloc((prim->vertices) * sizeof(int*));
 
 	// alocar colunas
 	for(i = 0; i < prim->vertices; i++) {
-		prim->grafo[i] = (int*)malloc(sizeof(int) * prim->vertices);
+		prim->grafo[i] = malloc((prim->vertices) * sizeof(int));
 	}
 
 	for(i = 0; i < prim->vertices; i++) {
@@ -121,7 +124,6 @@ void alocar_grafo(Prim *prim) {
 			prim->grafo[i][j] = prim->infinito;
 		}
 	}
-
 }
 
 void calcular_custo_minimo(Prim *prim) {
@@ -139,17 +141,21 @@ void mostrar_custo_minimo(Prim *prim) {
 	for (v = 0; v < prim->vertices; v++)
 		visitados[v] = -1;
 
-	visitados[0] = 0;
+	visitados[prim->verticeInicial] = 0;
 	while (esta_rodando != 0) {
+		// printf("c: %d\n", cont);
 	   	minimo = prim->infinito;
 	   	for (i = 0; i < prim->vertices; i++) 
 	       	if (visitados[i] != -1) 
-	          	for (j = 0; j < prim->vertices; j++)
+	          	for (j = 0; j < prim->vertices; j++){
 	           		if (visitados[j] == -1 && minimo > prim->grafo[i][j]) {
+						// printf("minimo: %d, g[%d][%d]: %d\n", minimo, i, j, prim->grafo[i][j]);
+						// printf("entrou\n");
 	               		minimo = prim->grafo[i][j];
 	               		u = i;
 	               		v = j;
 	           		}
+				}
 	   	
 	   	if (minimo == prim->infinito) {
 	   		esta_rodando = 0; // fim do laco
@@ -160,7 +166,7 @@ void mostrar_custo_minimo(Prim *prim) {
 	   	total+= minimo;
 	}
 	prim->custo_minimo = total;
-	printf("%d\n", prim->custo_minimo);
+	// printf("%d\n", prim->custo_minimo);
 }
 
 void mostrar_ordem_vertices(Prim *prim) {
@@ -183,28 +189,29 @@ void mostrar_ordem_vertices(Prim *prim) {
 	               		minimo = prim->grafo[i][j];
 	               		u = i;
 	               		v = j;
+						// printf("u: %d, v: %d\n", u, v);
 	           		}
 	   	
 	   	if (minimo == prim->infinito) {
 	   		esta_rodando = 0; // fim do laco
 	   		break; // sai do laco
 	   	}
-
 	   	visitados[v] = u;
 	   	printf("(%d, %d) ", u, v);
+
 	}
-	printf("\n");
+	// printf("\n");
 }
 
 void gerar_saida(Prim *prim, int no_argumentos, char **entrada) {
 	
 	FILE *arquivoSaida = getArquivoSaida(no_argumentos, entrada);
 
-	if(arquivoSaida){
-		fprintf(arquivoSaida, "%s: %d\n", prim->arquivo_saida, prim->custo_minimo); 
+	if(arquivoSaida != NULL){
+		fprintf(arquivoSaida, "%d\n", prim->custo_minimo); 
 
 	} else {
-		printf("%s: %d\n", prim->arquivo_saida, prim->custo_minimo); 
+		printf("%d\n", prim->custo_minimo); 
 	}
 	
 	fclose(arquivoSaida);
