@@ -1,5 +1,15 @@
 #include "kruskal.h"
 
+void print_help() {
+    printf("\n------------Kruskal Algorithm------------\n\n\n");
+    printf("The input needed to run the algorithm is:\n\n");
+    printf(" -f <input_file_name>\n\n\n");
+    printf("Others possible arguments are:\n\n");
+    printf(" -o <output_file_name>\n");
+    printf(" -s (solution in ascending order)\n");
+    printf("\n------------------------------------------\n\n");
+}
+
 subset** subsets_init(int V) {
     subset** subsets = malloc(V * sizeof(subset *));
 

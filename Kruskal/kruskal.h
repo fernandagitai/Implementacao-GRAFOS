@@ -14,6 +14,9 @@ typedef struct {
 } subset;
 
 
+void print_help();
+
+
 void free_graph(graph* g);
 
 

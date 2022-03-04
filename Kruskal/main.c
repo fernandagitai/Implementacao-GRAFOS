@@ -7,13 +7,7 @@ void main( int argc, char *argv[ ] ) {
 
 	for(i = 0 ; i < argc ; i++){
 		if(!strcmp(argv[i], "-h")) {
-			printf("\n------------Kruskal Algorithm------------\n\n\n");
-			printf("The input needed to run the algorithm is:\n\n");
-			printf(" -f <input_file_name>\n\n\n");
-			printf("Others possible arguments are:\n\n");
-			printf(" -o <output_file_name>\n");
-			printf(" -s (solution in ascending order)\n");
-			printf("\n------------------------------------------\n\n");
+			print_help();
 
 			return;
 		}
@@ -47,6 +41,8 @@ void main( int argc, char *argv[ ] ) {
 	
 	if(file_in == NULL){
 		printf("Invalid input.\n");
+		print_help();
+		
 		return;
 	}
 
