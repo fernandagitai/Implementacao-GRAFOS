@@ -1,10 +1,9 @@
 #include "kruskal.h"
 
 void main( int argc, char *argv[ ] ){
-	int start = 0, end = 0, in = 0, out = 0, solution = 0, i, j, V, E, v1, v2, w, cost;
-	int residual[MAX_NODES][MAX_NODES];
-	char file_in_name[15], *line, line_in[100], file_out_name[15] = "", check;
-	graph *g;
+	int start = 0, end = 0, in = 0, out = 0, solution = 0, i, mst_length, V, E, v1, v2, w, cost;
+	char file_in_name[15], file_out_name[15] = "", check;
+	graph g;
 
 	for(i = 0 ; i < argc ; i++){
 		if(!strcmp(argv[i], "-h")) {
@@ -44,11 +43,11 @@ void main( int argc, char *argv[ ] ){
 
 	fscanf(file_in, "%d%d", &V, &E);
 
-	g->V = V;
-	g->E = E;
-	//memset(g.edge, 0, sizeof(g.edge));
+	g.V = V;
+	g.E = E;
 
-	//printf("\nV -> %d E -> %d\n", g.V, g.E);
+	int mst[g.E][3];
+	memset(mst, 0, sizeof(mst));
 
 	for(i = 0 ; i < E ; i++) {
 		fscanf(file_in, "%d%d%c", &v1, &v2, &check);
@@ -57,12 +56,36 @@ void main( int argc, char *argv[ ] ){
 		} else {
 			w = 1;
 		}
-		//printf(" v1 -> %d v2 -> %d w -> %d\n", v1, v2, w);
 
-		g->edge[v1][v2] = w;
+		g.edge[i][0] = v1;
+		g.edge[i][1] = v2;
+		g.edge[i][2] = w;
 	}
 
-	cost = kruskal(g);
+	//printf("alou");
 
-	printf("%d", cost);
+	cost = kruskal(&g, mst, &mst_length);
+
+	if(strcmp(file_out_name, "")) {
+		FILE *file_out = fopen(file_out_name, "w");
+
+		if(solution) {
+			for(i = 0 ; i < mst_length ; i++) {
+				fprintf(file_out, "(%d,%d) : %d\n", mst[i][0], mst[i][1], mst[i][2]);
+			}
+		}
+		else {
+			fprintf(file_out, "%d", cost);
+		}
+	}
+	else {
+		if(solution) {
+			for(i = 0 ; i < mst_length ; i++) {
+				printf("(%d,%d) : %d\n", mst[i][0], mst[i][1], mst[i][2]);
+			}
+		}
+		else {
+			printf("%d", cost);
+		}
+	}
 }

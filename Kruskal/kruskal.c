@@ -1,17 +1,39 @@
 #include "kruskal.h"
 
-int find(subset subsets[], int i) {
-    if(subsets[i].parent == i){
-        return i;
-    }
-
-    return find(subsets, subsets[i].parent);
+subset* create_subsets(int V) {
+    return (subset*) malloc(V * sizeof(subset));
 }
 
-void do_union(subset subsets[], int v1, int v2) {
-    int root1 = find(subsets, v1);
-    int root2 = find(subsets, v2);
 
+subset* subsets_init(int V) {
+    subset* subsets = create_subsets(V);
+
+    for(int v = 1 ; v <= V ; ++v) {
+        subsets[v].parent = v;
+        subsets[v].rank = 0;
+    }
+
+    return subsets;
+}
+
+
+int compare (const void *a, const void *b) {
+    int *i = (int *) a;
+    int *j = (int *) b;
+
+    return i[2] - j[2];
+}
+
+
+int find(subset subsets[], int i) {
+    if(subsets[i].parent != i){
+        subsets[i].parent = find(subsets, subsets[i].parent);
+    }
+
+    return subsets[i].parent;
+}
+
+void do_union(subset subsets[], int root1, int root2) {
     if(subsets[root1].rank < subsets[root2].rank) {
         subsets[root1].parent = root2;
     }
@@ -24,37 +46,30 @@ void do_union(subset subsets[], int v1, int v2) {
     }
 }
 
-int kruskal(graph* g) {
-    int V = g->V, j = 0, i = 0, x, y, cost;
-    float mst[V - 1][3];
+int kruskal(graph* g, int mst[g->E][3], int *mst_length) {
+    int i, x, y, cost = 0, j = 0;
 
-    subset* subsets = subsets_init(V);
+    subset* subsets = subsets_init(g->V);
 
     qsort(g->edge, g->E, sizeof(g->edge[0]), compare);
 
-    while(j < V - 1) {
-        int* edge = g->edge[i++];
-
-        x = find(subsets, edge[0]);
-        y = find(subsets, edge[1]);
+    for(i = 0 ; i < g->E ; i++) {
+        x = find(subsets, g->edge[i][0]);
+        y = find(subsets, g->edge[i][1]);
 
         if(x != y) {
-            mst[j][0] = edge[0];
-            mst[j][1] = edge[1];
-            mst[j][2] = edge[2];
+            mst[j][0] = g->edge[i][0];
+            mst[j][1] = g->edge[i][1];
+            mst[j][2] = g->edge[i][2];
+
+            cost += mst[j][2];
             j++;
+
             do_union(subsets, x, y);
         }
     }
 
-    cost = 0;
-
-    for(i = 0 ; i < j ; ++i) {
-        //printf("%d -- %d == %d\n", (int) mst[i][0], (int) mst[i][1], (int) mst[i][2]);
-        cost += mst[i][2];
-    }
-
-    //printf("Cost: %d", cost);
+    *mst_length = j;
 
     return cost;
 }
