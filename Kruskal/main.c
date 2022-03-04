@@ -2,7 +2,7 @@
 
 void main( int argc, char *argv[ ] ) {
 	int start = 0, end = 0, in = 0, out = 0, solution = 0, i, mst_length, V, E, v1, v2, w, cost;
-	char file_in_name[1000], file_out_name[1000] = "", check;
+	char file_in_name[100], file_out_name[100] = "", check;
 	graph g;
 
 	for(i = 0 ; i < argc ; i++){
@@ -12,9 +12,7 @@ void main( int argc, char *argv[ ] ) {
 			printf(" -f <input_file_name>\n\n\n");
 			printf("Others possible arguments are:\n\n");
 			printf(" -o <output_file_name>\n");
-			printf(" -s (solution in ascending order)");
-			printf(" -i <initial_vertex>\n");
-			printf(" -l <end_vertex>\n");
+			printf(" -s (solution in ascending order)\n");
 			printf("\n------------------------------------------\n\n");
 
 			return;
@@ -48,6 +46,7 @@ void main( int argc, char *argv[ ] ) {
 	FILE *file_in = fopen(file_in_name, "r");
 	
 	if(file_in == NULL){
+		printf("Invalid input.\n");
 		return;
 	}
 
@@ -95,7 +94,7 @@ void main( int argc, char *argv[ ] ) {
 			}
 		}
 		else {
-			printf("%d", cost);
+			printf("%d\n", cost);
 		}
 	}
 

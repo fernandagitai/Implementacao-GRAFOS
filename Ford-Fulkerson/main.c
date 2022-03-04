@@ -2,7 +2,7 @@
 
 void main(int argc, char *argv[ ]) {
 	int start = -1, end = -1, solution = 0, i, j, V, E, v1, v2, w, max_flow;
-	char file_in_name[15], file_out_name[15] = "", check;
+	char file_in_name[100], file_out_name[100] = "", check;
 	graph g;
 
 	for(i = 0 ; i < argc ; i++){
@@ -99,7 +99,7 @@ void main(int argc, char *argv[ ]) {
 			}
 		}
 		else {
-			printf("%d", max_flow);
+			printf("%d\n", max_flow);
 		}
 	}
 }
