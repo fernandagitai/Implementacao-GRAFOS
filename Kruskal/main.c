@@ -1,13 +1,23 @@
 #include "kruskal.h"
 
-void main( int argc, char *argv[ ] ){
+void main( int argc, char *argv[ ] ) {
 	int start = 0, end = 0, in = 0, out = 0, solution = 0, i, mst_length, V, E, v1, v2, w, cost;
-	char file_in_name[15], file_out_name[15] = "", check;
+	char file_in_name[1000], file_out_name[1000] = "", check;
 	graph g;
 
 	for(i = 0 ; i < argc ; i++){
 		if(!strcmp(argv[i], "-h")) {
-			//show help
+			printf("\n------------Kruskal Algorithm------------\n\n\n");
+			printf("The input needed to run the algorithm is:\n\n");
+			printf(" -f <input_file_name>\n\n\n");
+			printf("Others possible arguments are:\n\n");
+			printf(" -o <output_file_name>\n");
+			printf(" -s (solution in ascending order)");
+			printf(" -i <initial_vertex>\n");
+			printf(" -l <end_vertex>\n");
+			printf("\n------------------------------------------\n\n");
+
+			return;
 		}
 
 		else if(!strcmp(argv[i], "-o")) {
@@ -45,6 +55,7 @@ void main( int argc, char *argv[ ] ){
 
 	g.V = V;
 	g.E = E;
+	g.edge = malloc(E * sizeof(int*));
 
 	int mst[g.E][3];
 	memset(mst, 0, sizeof(mst));
@@ -56,13 +67,12 @@ void main( int argc, char *argv[ ] ){
 		} else {
 			w = 1;
 		}
+		g.edge[i] = malloc(3 * sizeof(int));
 
 		g.edge[i][0] = v1;
 		g.edge[i][1] = v2;
 		g.edge[i][2] = w;
 	}
-
-	//printf("alou");
 
 	cost = kruskal(&g, mst, &mst_length);
 
@@ -88,4 +98,6 @@ void main( int argc, char *argv[ ] ){
 			printf("%d", cost);
 		}
 	}
+
+	free_graph(&g);
 }
