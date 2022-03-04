@@ -2,20 +2,12 @@
 
 void main(int argc, char *argv[ ]) {
 	int start = -1, end = -1, solution = 0, i, j, V, E, v1, v2, w, max_flow;
-	char file_in_name[15], file_out_name[15] = "", check;
+	char file_in_name[100], file_out_name[100] = "", check;
 	graph g;
 
 	for(i = 0 ; i < argc ; i++){
 		if(!strcmp(argv[i], "-h")) {
-			printf("\n\n---------Ford-Fulkerson Algorithm---------\n\n\n");
-			printf("The inputs needed to run the algorithm are:\n\n");
-			printf(" -f <input_file_name>\n");
-			printf(" -i <initial_vertex>\n");
-			printf(" -l <end_vertex>\n\n\n");
-			printf("Others possible arguments are:\n\n");
-			printf(" -o <output_file_name>\n");
-			printf(" -s (solution in ascending order)");
-			printf("\n\n------------------------------------------\n\n");
+			print_help();
 
 			return;
 		}
@@ -49,6 +41,7 @@ void main(int argc, char *argv[ ]) {
 	
 	if(file_in == NULL || start == -1 || end == -1) {
 		printf("Invalid input.\n");
+		print_help();
 		return;
 	}
 
@@ -99,7 +92,7 @@ void main(int argc, char *argv[ ]) {
 			}
 		}
 		else {
-			printf("%d", max_flow);
+			printf("%d\n", max_flow);
 		}
 	}
 }

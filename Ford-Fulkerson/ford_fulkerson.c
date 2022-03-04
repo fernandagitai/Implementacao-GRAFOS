@@ -1,5 +1,17 @@
 #include "ford_fulkerson.h"
 
+void print_help() {
+    printf("\n---------Ford-Fulkerson Algorithm---------\n\n\n");
+    printf("The inputs needed to run the algorithm are:\n\n");
+    printf(" -f <input_file_name>\n");
+    printf(" -i <initial_vertex>\n");
+    printf(" -l <end_vertex>\n\n\n");
+    printf("Others possible arguments are:\n\n");
+    printf(" -o <output_file_name>\n");
+    printf(" -s (solution in ascending order)");
+    printf("\n\n------------------------------------------\n\n");
+}
+
 int dfs(int v, int residual[][v], int start, int end, int visited[v], int path[v]) {
     int i, j, current;
 

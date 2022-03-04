@@ -1,13 +1,15 @@
 #include "kruskal.h"
 
-void main( int argc, char *argv[ ] ){
+void main( int argc, char *argv[ ] ) {
 	int start = 0, end = 0, in = 0, out = 0, solution = 0, i, mst_length, V, E, v1, v2, w, cost;
-	char file_in_name[15], file_out_name[15] = "", check;
+	char file_in_name[100], file_out_name[100] = "", check;
 	graph g;
 
 	for(i = 0 ; i < argc ; i++){
 		if(!strcmp(argv[i], "-h")) {
-			//show help
+			print_help();
+
+			return;
 		}
 
 		else if(!strcmp(argv[i], "-o")) {
@@ -38,6 +40,9 @@ void main( int argc, char *argv[ ] ){
 	FILE *file_in = fopen(file_in_name, "r");
 	
 	if(file_in == NULL){
+		printf("Invalid input.\n");
+		print_help();
+		
 		return;
 	}
 
@@ -45,6 +50,7 @@ void main( int argc, char *argv[ ] ){
 
 	g.V = V;
 	g.E = E;
+	g.edge = malloc(E * sizeof(int*));
 
 	int mst[g.E][3];
 	memset(mst, 0, sizeof(mst));
@@ -56,13 +62,12 @@ void main( int argc, char *argv[ ] ){
 		} else {
 			w = 1;
 		}
+		g.edge[i] = malloc(3 * sizeof(int));
 
 		g.edge[i][0] = v1;
 		g.edge[i][1] = v2;
 		g.edge[i][2] = w;
 	}
-
-	//printf("alou");
 
 	cost = kruskal(&g, mst, &mst_length);
 
@@ -85,7 +90,9 @@ void main( int argc, char *argv[ ] ){
 			}
 		}
 		else {
-			printf("%d", cost);
+			printf("%d\n", cost);
 		}
 	}
+
+	free_graph(&g);
 }
